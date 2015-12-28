@@ -21,3 +21,4 @@ Just run `python cybrary-video-downloader.py`
 | Version  | Release Date | Description| Known Bugs |
 | ------------- | ------------- | ------------- | ------------- |
 | `v0.1`  | 12-27-15  | Beta  | <ul><li>No proper Authentication. User must input the right credentials</li><li>Downloading of videos are not in order</li></ul> |
+| `v0.2`  | 12-29-15  | Release Candidate  | <ul><li>Still no proper Authentication. (User must input the right credentials)</li></ul> |
