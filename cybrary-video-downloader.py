@@ -1,15 +1,8 @@
+import os
 import re
-import sys
-import urllib
 import getpass
-import urllib2
 import requests
-import cookielib
 from bs4 import BeautifulSoup
-from subprocess import call
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 ### Global Variables
 courselist = {};
@@ -60,7 +53,7 @@ def courseselection():
         print "\n No Course selected!"
         selectedcourse = input(" Select a Course to Download: ")
 
-    print "\n\n Downloading Course Videos of",courseselectionlist[selectedcourse]
+    print "\n Downloading Course Videos of",courseselectionlist[selectedcourse]
     global selectedcourselink
     selectedcourselink = courselist[courseselectionlist[selectedcourse]]
     print " Course Link:",selectedcourselink
@@ -82,22 +75,35 @@ def getmodules():
     modulediv = moduletable.find('div', class_="modulelisting")
     divhtml = str(modulediv)
 
-    moduleregex = re.compile('https?://www.cybrary.it/video/\w+(?:-[\w]+)*/')
-    modulematch = list(set(moduleregex.findall(divhtml)))
-    for i in range (len(modulematch)):
-        print " Downloading Video of",modulematch[i]
-        videodownload(str(modulematch[i]))
+    moduletitleregex = re.compile('<a href="#">(?:\w|\+| |-|&|,)+</a>')
+    moduletitle = moduletitleregex.findall(divhtml)
+
+    modulevidregex = re.compile('https?://www.cybrary.it/video/\w+(?:-[\w]+)*/')
+    moduletable = BeautifulSoup(divhtml, 'html.parser')
+    modulediv = moduletable.find_all('div', class_="slide_toggle_content")
+
+    for i in range (len(moduletitle)):
+        linktag = BeautifulSoup(moduletitle[i], 'html.parser')
+        contenttag = linktag.find('a')
+        contenttag = contenttag.contents
+        outputdirectory = os.getcwd()+"/"+contenttag[0]+"/"
+        if(not os.path.isdir(outputdirectory)):
+            os.mkdir(outputdirectory)
+        modulevid = list(set(modulevidregex.findall(str(modulediv[i]))))
+        for videourl in modulevid:
+            videodownload(videourl, outputdirectory)
 
 ### Download Videos using youtube-dl
-def videodownload(url):
+def videodownload(url, outputdirectory):
     video = session.get(url)
     videohtml = video.text
 
     #https://player.vimeo.com/video/999999999
-    videoregex = re.search( r'https://player.vimeo.com/video/\w*', videohtml)
+    videoregex = re.search( r'https://player.vimeo.com/video/\w+', videohtml)
     if videoregex:
-        command = "youtube-dl -cif http-%sp %s" % (videoquality, videoregex.group())
-        call(command.split(), shell=False)
+        outputformat = outputdirectory+"%(title)s-%(id)s.%(ext)s"
+        command = "youtube-dl -cif http-%sp -o '%s' %s" % (videoquality, outputformat, videoregex.group())
+        os.system(command)
     else:
         print "Something is wrong. Please contact dinosaurfiles on Github"
 
