@@ -75,18 +75,15 @@ def getmodules():
     modulediv = moduletable.find('div', class_="modulelisting")
     divhtml = str(modulediv)
 
-    moduletitleregex = re.compile('<a href="#">(?:\w|\+| |-|&|,)+</a>')
-    moduletitle = moduletitleregex.findall(divhtml)
+    moduletitlesoup = BeautifulSoup(divhtml, 'html.parser')
+    moduletitle = moduletitlesoup.find_all('a', href="#")
 
     modulevidregex = re.compile('https?://www.cybrary.it/video/\w+(?:-[\w]+)*/')
     moduletable = BeautifulSoup(divhtml, 'html.parser')
     modulediv = moduletable.find_all('div', class_="slide_toggle_content")
 
     for i in range (len(moduletitle)):
-        linktag = BeautifulSoup(moduletitle[i], 'html.parser')
-        contenttag = linktag.find('a')
-        contenttag = contenttag.contents
-        outputdirectory = os.getcwd()+"/"+contenttag[0]+"/"
+        outputdirectory = os.getcwd()+"/"+str(moduletitle[i].contents[0])+"/"
         if(not os.path.isdir(outputdirectory)):
             os.mkdir(outputdirectory)
         modulevid = list(set(modulevidregex.findall(str(modulediv[i]))))

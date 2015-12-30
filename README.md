@@ -1,4 +1,4 @@
-# cybrary-video-downloader (Beta)
+# cybrary-video-downloader (v0.2)
 Downloads Course Videos From [Cybrary.it](https://www.cybrary.it/) (For Educational Purpose only)
 ## Why u do diz?
 This program is made for the love and passion for cybersecurity. Also for a friend who has a slow internet connection and the needs for offline learning
