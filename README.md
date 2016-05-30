@@ -1,4 +1,4 @@
-# cybrary-video-downloader (v0.3) Developmental
+# cybrary-video-downloader (v0.3) Dev
 Downloads Course Videos From [Cybrary.it](https://www.cybrary.it/)
 
 ## Why u do diz?
@@ -9,11 +9,11 @@ I made this program for the sole purpose that I mentioned above and kudos for al
 ## Requirements:
 - `Python` 2.x and above
 - `more_itertools` - Install using `pip install more_itertools`
-- `youtube-dl` - Follow this [guide](https://rg3.github.io/youtube-dl/download.html) to install youtube-dl
+- `youtube-dl` - Install using pip `pip install --upgrade youtube_dl` or follow this [guide](https://rg3.github.io/youtube-dl/download.html).
 
 ## Usage Example:
-`./cybrary-video-downloader.py <270/360/720> "<course link>"`
+`./cybrary-video-downloader.py 270/360/720 "course link"`
 
-Downloading 360p videos:
+Ex: Download videos with 360p quality:
 
 `./cybrary-video-downloader.py 360 "https://www.cybrary.it/course/ethical-hacking/"`
