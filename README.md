@@ -1,24 +1,19 @@
-# cybrary-video-downloader (v0.2)
-Downloads Course Videos From [Cybrary.it](https://www.cybrary.it/) (For Educational Purpose only)
+# cybrary-video-downloader (v0.3) Developmental
+Downloads Course Videos From [Cybrary.it](https://www.cybrary.it/)
+
 ## Why u do diz?
 This program is made for the love and passion for cybersecurity. Also for a friend who has a slow internet connection and the needs for offline learning
 ## For the folks at Cybrary.it
 I made this program for the sole purpose that I mentioned above and kudos for all the **free and awesome** courses you offered! I know this program bypasses ads but don't worry, we will donate from time-to-time.
 :hand::smile:
 ## Requirements:
-### Linux \ MacOS:
 - `Python` 2.x and above
+- `more_itertools` - Install using `pip install more_itertools`
 - `youtube-dl` - Follow this [guide](https://rg3.github.io/youtube-dl/download.html) to install youtube-dl
-- `BeautifulSoup` - Installation instructions [here](http://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup)
 
-### Windows (Soon..)
+## Usage Example:
+`./cybrary-video-downloader.py <270/360/720> "<course link>"`
 
-## Usage:
-Just run `python cybrary-video-downloader.py`
+Downloading 360p videos:
 
-
-### Versions:
-| Version  | Release Date | Description| Known Bugs |
-| ------------- | ------------- | ------------- | ------------- |
-| `v0.1`  | 12-27-15  | Beta  | <ul><li>No proper Authentication. User must input the right credentials</li><li>Downloading of videos are not in order</li></ul> |
-| `v0.2`  | 12-29-15  | Release Candidate  | <ul><li>Still no proper Authentication. (User must input the right credentials)</li></ul> |
+`./cybrary-video-downloader.py 360 "https://www.cybrary.it/course/ethical-hacking/"`
