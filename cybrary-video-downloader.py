@@ -13,7 +13,6 @@ sys.setdefaultencoding('utf-8')
 
 # Global Variables
 session = requests.session()
-lessonVideoLink = {}
 
 
 # Initialize Login
@@ -30,17 +29,16 @@ def login(username, password):
 
 
 # Get Lessons
-def getLessonList(courselink):
+def getLessonList(courselink, quality):
     global session
     coursehtml = (session.get(courselink)).text
 
-    lessonLinkRegex = re.compile(
-        'https?://www.cybrary.it/video/\w+(?:-[\w]+)*/')
-    matchme = list(unique_everseen(lessonLinkRegex.findall(coursehtml)))
+    lessonLinkRegex = re.compile('https?://www.cybrary.it/video/\w+(?:-[\w]+)*/')
+    matchedLessonLink = list(unique_everseen(lessonLinkRegex.findall(coursehtml)))
 
-    global lessonVideoLink
-    for link in matchme:
-        lessonVideoLink[link] = getVideoLink(link)
+    for link in matchedLessonLink:
+        print "Downloading "+link
+        downloadVideos(getVideoLink(link), quality)
 
 
 # Get Video URL
@@ -53,14 +51,9 @@ def getVideoLink(lessonlink):
 
 
 # Download Videos using youtube-dl
-def downloadVideos(quality):
-    global lessonVideoLink
-
-    for key in lessonVideoLink:
-        print "Downloading %s" % (key)
-        command = "youtube-dl -cif http-%sp %s" % (
-            quality, lessonVideoLink[key])
-        os.system(command)
+def downloadVideos(videoLink, quality):
+    command = "youtube-dl -cif http-%sp %s" % (quality, videoLink)
+    os.system(command)
 
 
 def main():
@@ -71,8 +64,7 @@ def main():
         username = raw_input("Username: ")
         passwd = getpass.getpass()
         login(username, passwd)
-        getLessonList(sys.argv[2])
-        downloadVideos(sys.argv[1])
+        getLessonList(sys.argv[2], sys.argv[1])
 
 if __name__ == '__main__':
     main()
