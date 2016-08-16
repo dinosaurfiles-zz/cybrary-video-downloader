@@ -7,7 +7,7 @@ This program is made for the love and passion for cybersecurity. Also for a frie
 I made this program for the sole purpose that I mentioned above and kudos for all the **free and awesome** courses you offered! I know this program bypasses ads but don't worry, we will donate from time-to-time.
 :hand::smile:
 ## Requirements:
-- `Python` 2.x and above
+- `Python` 2.7.x
 - `more_itertools` - Install using `pip install more_itertools`
 - `youtube-dl` - Install using pip `pip install --upgrade youtube_dl` or follow this [guide](https://rg3.github.io/youtube-dl/download.html).
 
