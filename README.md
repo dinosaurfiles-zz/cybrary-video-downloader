@@ -1,3 +1,17 @@
+# ATTENTION! (September 7, 2016)
+# Sorry to be the bringer of the bad news. Unfortunately, this project might be dead. Due to
+## [1] [Google's aggressive CAPTCHA](https://www.google.com/recaptcha) system which cybrary.it also uses to protect its users which they should really do. (Also I don't want to work on breaking CAPTCHAs :p )
+
+## [2] Moving to Python 3.x might take considerable time plus [1]
+
+# But don't fret! Cause we might...
+## [3] Make a browser extension(firefox first) wich pulls all the links of the course videos. (No more CAPTCHAs but you need to be logged in into the cybrary.it website)
+## [4] Ask cybrary.it to make all course videos available for download. (Currently, cybrary.it's videos are hosted on vimeo)
+
+
+### Also, don't forget to follow me on github for more updates!
+
+---
 # cybrary-video-downloader (v0.3)
 Downloads Course Videos From [Cybrary.it](https://www.cybrary.it/)
 
