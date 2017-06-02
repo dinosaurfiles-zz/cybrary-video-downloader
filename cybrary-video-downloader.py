@@ -1,22 +1,24 @@
-#!/usr/bin/python2
-
 import os
-import re
-import sys
 import getpass
 import requests
-from more_itertools import unique_everseen
 
-# Set sys encoding to UTF-8
-reload(sys)
-sys.setdefaultencoding('utf-8')
+from bs4 import BeautifulSoup
 
-# Global Variables
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--quality', choices=[360, 720], default=360,type=int, help="Select video quality")
+parser.add_argument('--course', default="https://www.cybrary.it/course/ethical-hacking/", help="Course link")
+args = parser.parse_args()
+
+# Global Session Variables
 session = requests.session()
-
 
 # Initialize Login
 def login(username, password):
+	headers = {
+		'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1"
+	}
+
 	values = {
 		'log': username,
 		'pwd': password,
@@ -24,47 +26,44 @@ def login(username, password):
 		'wp-submit': 'Log+In',
 		'redirect_to': ''
 	}
+
+	# Submit username and password for login
 	global session
-	session.post('https://www.cybrary.it/wp-login.php', data=values)
+	session.post('https://www.cybrary.it/wp-login.php', data=values, headers=headers)
 
-
-# Get Lessons
-def getLessonList(courselink, quality):
+# Parse course links and download videos
+def downloadCourseVideos(quality, course):
 	global session
-	coursehtml = (session.get(courselink)).text
 
-	lessonLinkRegex = re.compile('https?://www.cybrary.it/video/\w+(?:-[\w]+)*/')
-	matchedLessonLink = list(unique_everseen(lessonLinkRegex.findall(coursehtml)))
+	courseHTML = (session.get(course)).text
+	parsedCourseHTML = BeautifulSoup(courseHTML, 'html.parser')
 
-	for link in matchedLessonLink:
-		print "Downloading "+link
-		downloadVideos(getVideoLink(link), quality)
+	for lessonLink in parsedCourseHTML.find_all('a', attrs={'class':'title'}):
+		lessonHTML = (session.get(lessonLink.get('href'))).text
+		parsedLessonHTML = BeautifulSoup(lessonHTML, 'html.parser')
+		videoLink = parsedLessonHTML.find('iframe', attrs={'class':'sv_lessonvideo'})
+		downloadVideo(videoLink.get('src'), quality)
 
+# Download video using youtube-dl
+def downloadVideo(videoLink, quality):
+	# Apparently, cybrary.it uses vimeo to host their videos and this might change at anytime.
+	# Feel free to submit an issue if errors exist
 
-# Get Video URL
-def getVideoLink(lessonlink):
-	global session
-	lessonhtml = (session.get(lessonlink)).text
+	# If windows
+	if os.name == 'nt':
+		command = "youtube-dl.exe -cif http-%sp %s" % (quality, videoLink)
 
-	videoLinkRegex = re.compile('https?://player.vimeo.com/video/[\d]+')
-	return (list(unique_everseen(videoLinkRegex.findall(lessonhtml))))[0]
-
-
-# Download Videos using youtube-dl
-def downloadVideos(videoLink, quality):
-	command = "youtube-dl -cif http-%sp %s" % (quality, videoLink)
+	# *nix
+	else:
+		command = "youtube-dl -cif http-%sp %s" % (quality, videoLink)
 	os.system(command)
 
-
+# Main function
 def main():
-	if len(sys.argv) < 3:
-		print "Usage: ./cybrary-video-downloader.py <270/360/720> \"<course link>\""
-		print "Example: ./cybrary-video-downloader.py 360 \"https://www.cybrary.it/course/ethical-hacking/\""
-	else:
-		username = raw_input("Username: ")
-		passwd = getpass.getpass()
-		login(username, passwd)
-		getLessonList(sys.argv[2], sys.argv[1])
+	username = raw_input("Username: ")
+	password = getpass.getpass()
+	login(username, password)
+	downloadCourseVideos(args.quality, args.course)
 
 if __name__ == '__main__':
 	main()
