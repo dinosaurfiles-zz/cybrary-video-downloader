@@ -55,7 +55,7 @@ def downloadVideo(videoLink, quality):
 
 	# *nix
 	else:
-		command = "youtube-dl -cif http-%sp %s" % (quality, videoLink)
+		command = "youtube-dl -cif http-%sp %s --referer https://www.cybrary.it/" % (quality, videoLink)
 	os.system(command)
 
 # Main function
