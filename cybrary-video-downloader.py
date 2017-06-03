@@ -42,7 +42,10 @@ def downloadCourseVideos(quality, course):
 		lessonHTML = (session.get(lessonLink.get('href'))).text
 		parsedLessonHTML = BeautifulSoup(lessonHTML, 'html.parser')
 		videoLink = parsedLessonHTML.find('iframe', attrs={'class':'sv_lessonvideo'})
-		downloadVideo(videoLink.get('src'), quality)
+		try:
+             		downloadVideo(videoLink.get('src'), quality)
+         	except Exception as e:
+             		print e
 
 # Download video using youtube-dl
 def downloadVideo(videoLink, quality):
