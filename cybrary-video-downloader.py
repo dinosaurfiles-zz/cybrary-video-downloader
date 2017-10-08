@@ -8,7 +8,11 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--quality', choices=[360, 720], default=360,type=int, help="Select video quality")
 parser.add_argument('--course', default="https://www.cybrary.it/course/ethical-hacking/", help="Course link")
+parser.add_argument('--ssl', choices=["True", "False"], default="True" , help="Turn on/off SSL")
 args = parser.parse_args()
+
+# Make SSL argument boolean
+args.ssl = bool(args.ssl)
 
 # Global Session Variables
 session = requests.session()
@@ -35,11 +39,11 @@ def login(username, password):
 def downloadCourseVideos(quality, course):
 	global session
 
-	courseHTML = (session.get(course)).text
+	courseHTML = (session.get(course, verify=args.ssl)).text
 	parsedCourseHTML = BeautifulSoup(courseHTML, 'html.parser')
 
 	for lessonLink in parsedCourseHTML.find_all('a', attrs={'class':'title'}):
-		lessonHTML = (session.get(lessonLink.get('href'))).text
+		lessonHTML = (session.get(lessonLink.get('href'), verify=args.ssl)).text
 		parsedLessonHTML = BeautifulSoup(lessonHTML, 'html.parser')
 		videoLink = parsedLessonHTML.find('iframe', attrs={'class':'sv_lessonvideo'})
 		if videoLink:
