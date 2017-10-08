@@ -20,3 +20,7 @@ I made this program for the sole purpose that I mentioned above and kudos for al
 `python cybrary-video-downloader.py --quality 360 --course "https://www.cybrary.it/course/ethical-hacking/"`
 
 `python cybrary-video-downloader.py --help` for additonal usage
+
+## Quick Help!
+- SSL Verification errors!
+    - Use the ` -ssl False` option. [Issue #10](https://github.com/dinosaurfiles/cybrary-video-downloader/issues/10)
