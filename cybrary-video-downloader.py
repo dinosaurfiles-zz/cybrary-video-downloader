@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--quality', choices=[360, 720], default=360,type=int, help="Select video quality")
+parser.add_argument('--quality', choices=[360, 720, 1080], default=360,type=int, help="Select video quality")
 parser.add_argument('--course', default="https://www.cybrary.it/course/ethical-hacking/", help="Course link")
 parser.add_argument('--ssl', choices=["True", "False"], default="True" , help="Turn on/off SSL")
 args = parser.parse_args()
