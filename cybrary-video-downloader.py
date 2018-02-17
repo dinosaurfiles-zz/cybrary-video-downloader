@@ -5,9 +5,9 @@ import requests
 from bs4 import BeautifulSoup
 
 import argparse
-parser = argparse.ArgumentParser()
+course_link = "https://www.cybrary.it/course/ethical-hacking/"
 parser.add_argument('--quality', choices=[360, 720], default=360,type=int, help="Select video quality")
-parser.add_argument('--course', default="https://www.cybrary.it/course/ethical-hacking/", help="Course link")
+parser.add_argument('--course', default=course_link, help="Course link")
 parser.add_argument('--ssl', choices=["True", "False"], default="True" , help="Turn on/off SSL")
 args = parser.parse_args()
 
@@ -41,7 +41,11 @@ def downloadCourseVideos(quality, course):
 
 	courseHTML = (session.get(course, verify=args.ssl)).text
 	parsedCourseHTML = BeautifulSoup(courseHTML, 'html.parser')
-
+	# course_name = parsedCourseHTML.select("h1")[0].text.strip()
+	course_name = course_link.split('/')[-2]
+	if not os.path.exists(course_name):
+		os.makedirs(course_name)
+	os.chdir(course_name)
 	for lessonLink in parsedCourseHTML.find_all('a', attrs={'class':'title'}):
 		lessonHTML = (session.get(lessonLink.get('href'), verify=args.ssl)).text
 		parsedLessonHTML = BeautifulSoup(lessonHTML, 'html.parser')
