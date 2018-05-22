@@ -42,7 +42,7 @@ def downloadCourseVideos(quality, course):
 	courseHTML = (session.get(course, verify=args.ssl)).text
 	parsedCourseHTML = BeautifulSoup(courseHTML, 'html.parser')
 
-	for lessonLink in parsedCourseHTML.find_all('a', attrs={'class':'title'}):
+	for lessonLink in parsedCourseHTML.find_all('a', attrs={'class':'modulehover'}):
 		lessonHTML = (session.get(lessonLink.get('href'), verify=args.ssl)).text
 		parsedLessonHTML = BeautifulSoup(lessonHTML, 'html.parser')
 		videoLink = parsedLessonHTML.find('iframe', attrs={'class':'sv_lessonvideo'})
