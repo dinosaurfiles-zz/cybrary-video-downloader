@@ -1,74 +1,85 @@
 import os
+import sys
 import getpass
 import requests
-
+import argparse
 from bs4 import BeautifulSoup
 
-import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--quality', choices=[360, 720], default=360,type=int, help="Select video quality")
-parser.add_argument('--course', default="https://www.cybrary.it/course/ethical-hacking/", help="Course link")
-parser.add_argument('--ssl', choices=["True", "False"], default="True" , help="Turn on/off SSL")
+
+parser.add_argument('--quality',
+                    choices=[360, 720],
+                    default=360,
+                    type=int,
+                    help="Select video quality"
+                    )
+
+parser.add_argument('--course',
+                    default="https://www.cybrary.it/course/ethical-hacking/",
+                    help="Course link"
+                    )
+
 args = parser.parse_args()
-
-# Make SSL argument boolean
-args.ssl = bool(args.ssl)
-
-# Global Session Variables
 session = requests.session()
+
 
 # Initialize Login
 def login(username, password):
-	headers = {
-		'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1"
-	}
 
-	values = {
-		'log': username,
-		'pwd': password,
-		'testcookie': 1,
-		'wp-submit': 'Log+In',
-		'redirect_to': ''
-	}
+    params = {
+        'log': username,
+        'pwd': password,
+        'r3f5x9JS': 'https%3A//www.cybrary.it/',
+        'redirect_to': 'https://www.cybrary.it',
+        'testcookie': 1,
+        'wp-submit': 'Log In'
+    }
 
-	# Submit username and password for login
-	global session
-	session.post('https://www.cybrary.it/wp-login.php', data=values, headers=headers)
+    # Submit username and password for login
 
-# Parse course links and download videos
-def downloadCourseVideos(quality, course):
-	global session
+    global session
+    connect = session.post('https://www.cybrary.it/wp-login.php', data=params)
+    cookies = connect.cookies.get_dict()
 
-	courseHTML = (session.get(course, verify=args.ssl)).text
-	parsedCourseHTML = BeautifulSoup(courseHTML, 'html.parser')
+    if len(cookies.keys()) != 6:
+        sys.exit('invalid parameters')
 
-	for lessonLink in parsedCourseHTML.find_all('a', attrs={'class':'title'}):
-		lessonHTML = (session.get(lessonLink.get('href'), verify=args.ssl)).text
-		parsedLessonHTML = BeautifulSoup(lessonHTML, 'html.parser')
-		videoLink = parsedLessonHTML.find('iframe', attrs={'class':'sv_lessonvideo'})
-		if videoLink:
-			downloadVideo(videoLink.get('src'), quality)
 
-# Download video using youtube-dl
-def downloadVideo(videoLink, quality):
-	# Apparently, cybrary.it uses vimeo to host their videos and this might change at anytime.
-	# Feel free to submit an issue if errors exist
+def download_course_videos(quality, course):
+    global session
 
-	# If windows
-	if os.name == 'nt':
-		command = "youtube-dl.exe -cif http-%sp %s --referer https://www.cybrary.it/" % (quality, videoLink)
+    course_html = (session.get(course)).text
+    parsed_course_html = BeautifulSoup(course_html, 'html.parser')
 
-	# *nix
-	else:
-		command = "youtube-dl -cif http-%sp %s --referer https://www.cybrary.it/" % (quality, videoLink)
-	os.system(command)
+    for lesson_tag in parsed_course_html.find_all(
+            'a', attrs={'class': 'modulehover'}
+    ):
+        lesson_html = session.get(lesson_tag.get('href'))
+        parsed_lesson_html = BeautifulSoup(lesson_html.text, 'html.parser')
+        for video_tag in parsed_lesson_html.findAll(
+                'iframe', attrs={'id': 'lessonPlayer'}
+        ):
+            download_video(video_tag.get('src'), quality)
+
+
+def download_video(video_link, quality):
+    if os.name == 'nt':
+        command = ("youtube-dl.exe -cif http-%sp %s --referer "
+                   "https://www.cybrary.it/" % (quality, video_link))
+    else:
+        command = ("youtube-dl -cif http-%sp %s --referer "
+                   "https://www.cybrary.it/" % (quality, video_link))
+
+    os.system(command)
+
 
 # Main function
 def main():
-	username = raw_input("Username: ")
-	password = getpass.getpass()
-	login(username, password)
-	downloadCourseVideos(args.quality, args.course)
+    username = input("Username: ")
+    password = getpass.getpass()
+    login(username, password)
+    download_course_videos(args.quality, args.course)
+
 
 if __name__ == '__main__':
-	main()
+    main()
