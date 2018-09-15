@@ -65,7 +65,7 @@ def downloadVideo(videoLink, quality):
 
 # Main function
 def main():
-	username = raw_input("Username: ")
+	username = input("Username: ")
 	password = getpass.getpass()
 	login(username, password)
 	downloadCourseVideos(args.quality, args.course)
